@@ -1,0 +1,67 @@
+'use client';
+import { useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
+import Image from 'next/image';
+import { ArrowRight, ArrowLeft, Coffee, Feather, Check, RotateCcw, Share2, Copy, Users } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Progress } from '@/components/ui/progress';
+import { questions, birds, score, paymentLink } from '@/lib/quiz';
+export default function Home({initialLocale}:{initialLocale:'en'|'zh-hant'}) {
+ const en=initialLocale==='en';
+ const [answers,setAnswers]=useState<number[]>(Array(20).fill(-1));
+ const [step,setStep]=useState(0);
+ const [done,setDone]=useState(false);
+ const [count,setCount]=useState<number|null>(null);
+ const [countError,setCountError]=useState(false);
+ const [shareMessage,setShareMessage]=useState('');
+ const [shareUrl,setShareUrl]=useState('');
+ const [ready,setReady]=useState(false);
+ const heading=useRef<HTMLHeadingElement>(null);
+ const t=(zh:string,eng:string)=>en?eng:zh;
+ function switchLanguage(event:React.MouseEvent<HTMLAnchorElement>,locale:string){
+  if(event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+  try { sessionStorage.setItem('dope-language-transfer',JSON.stringify({answers,step,done,at:Date.now()})); }catch{}
+  window.location.assign('/'+locale);event.preventDefault();
+ }
+ useEffect(()=>{
+  try{const saved=sessionStorage.getItem('dope-language-transfer');sessionStorage.removeItem('dope-language-transfer');if(saved){const value=JSON.parse(saved);if(Date.now()-value.at<60000&&Array.isArray(value.answers)&&value.answers.length===20&&value.answers.every((n:unknown)=>Number.isInteger(n)&&Number(n)>=-1&&Number(n)<=3)&&Number.isInteger(value.step)&&value.step>=0&&value.step<20){setAnswers(value.answers);setStep(value.step);setDone(value.done===true&&value.answers.every((n:number)=>n>=0));}}}catch{}
+  setReady(true);
+  fetch('/api/session',{method:'POST'}).catch(()=>{});
+  fetch('/api/completions').then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>setCount(data.total)).catch(()=>setCountError(true));
+ },[]);
+ useEffect(()=>{
+  if(!ready||!done)return;
+  let alive=true;
+  fetch('/api/completions',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({answers})}).then(r=>{if(!r.ok)throw Error();return r.json()}).then(data=>{if(alive){setCount(data.total);setCountError(false)}}).catch(()=>{if(alive)setCountError(true)});
+  return()=>{alive=false};
+ },[ready,done,answers]);
+ async function shareResult(copyOnly=false){
+  const url=window.location.origin+'/'+initialLocale;
+  const values=score(answers),highest=Math.max(...values);
+  const names=birds.filter((_,i)=>values[i]===highest).map(b=>b.name[en?1:0]).join(' + ');
+  const text=t('我的 DOPE 溝通風格是 '+names+'！你是哪一種鳥？一起來測驗：','My DOPE communication style is '+names+'! Which bird are you? Take the quiz:');
+  setShareMessage('');
+  try{if(!copyOnly&&navigator.share){await navigator.share({title:'DOPE TEST',text,url});setShareMessage(t('已開啟分享','Shared'));}else if(navigator.clipboard){await navigator.clipboard.writeText(text+' '+url);setShareMessage(t('已複製，貼給朋友一起玩！','Copied — send it to a friend!'));}else{setShareUrl(url);setShareMessage(t('請複製下方連結','Copy the link below'));}}catch(error){if((error as Error).name!=='AbortError'){setShareUrl(url);setShareMessage(t('請複製下方連結','Copy the link below'));}}
+ }
+ useEffect(()=>{document.documentElement.lang=en?'en':'zh-Hant'},[en]);
+ useEffect(()=>{
+  type Context={registerTool:(tool:{name:string;description:string;inputSchema:object;annotations:object;execute:(input:unknown)=>unknown},options:{signal:AbortSignal})=>void|Promise<void>};
+  const context=(document as Document & {modelContext?:Context}).modelContext;
+  if(!context?.registerTool)return;
+  const lifecycle=new AbortController();
+  try {void Promise.resolve(context.registerTool({name:'complete_dope_quiz',description:'Complete the quiz using exactly 20 explicitly supplied user answers in question order. Codes: 0=Dove, 1=Owl, 2=Peacock, 3=Eagle. Never infer answers for the user. Displays the same results as the quiz.',inputSchema:{type:'object',properties:{answers:{type:'array',items:{type:'integer',minimum:0,maximum:3},minItems:20,maxItems:20}},required:['answers'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(input){const a=(input as {answers?:unknown})?.answers;if(!Array.isArray(a)||a.length!==20||a.some(v=>!Number.isInteger(v)||v<0||v>3))throw new Error('Provide exactly 20 integer answers from 0 to 3.');flushSync(()=>{setAnswers([...a]);setStep(19);setDone(true)});return {percentages:score(a),complete:true}}},{signal:lifecycle.signal})).catch(()=>{});}catch{/* Unsupported registry must not block the quiz. */}
+  return()=>lifecycle.abort();
+ },[]);
+ useEffect(()=>{if(step||done)heading.current?.focus()},[step,done]);
+ const result=score(answers),top=Math.max(...result),leaders=birds.filter((_,i)=>result[i]===top);
+ return <div className="site-shell">
+ <header className="topbar"><a className="wordmark" href="/" aria-label="DOPE TEST"><Feather size={23}/><span>DOPE<span className="light"> TEST</span></span><span className="brand-dot"/></a><div className="header-actions"><a className="coffee-nav" href="#coffee"><Coffee size={17}/><span>{t('請我喝咖啡','Buy me a coffee')}</span></a><div className="language" aria-label={t('語言','Language')}><a href="/zh-hant" aria-current={!en?"page":undefined} onClick={event=>switchLanguage(event,"zh-hant")}>繁中</a><a href="/en" aria-current={en?"page":undefined} onClick={event=>switchLanguage(event,"en")}>EN</a></div></div></header>
+ <main><div className="intro"><div className="eyebrow"><span/>{t('認識自己，從溝通開始','SELF-DISCOVERY STARTS WITH COMMUNICATION')}</div><h1>{t('你的性格，','Find your ')}<em>{t('是哪一種鳥？','bird personality.')}</em></h1><p>{t('用日常小選擇，探索你的心理與溝通風格。沒有標準答案，選最像平常的你。','Explore your personality and communication style through everyday choices. No right answers — just the one that feels most like you.')}</p><div className="community"><Users size={18}/><div><strong>{count!==null?t('已有 '+count.toLocaleString()+' 位完成測試*',count.toLocaleString()+' quiz completions*'):t('一起探索你的溝通風格','Discover your communication style together')}</strong><small>{t('* 含 3,125 初始基數；新增完成以匿名瀏覽器去重，並非經驗證的獨立人數。','* Includes a 3,125 starting baseline; new completions are deduplicated per anonymous browser, not verified unique people.')}</small>{countError&&<small role="status">{t('計數暫時無法同步，測驗仍可正常使用。','Count temporarily unavailable. Your quiz still works.')}</small>}</div></div><div className="facts"><span>{t('20 道情境題','20 everyday scenarios')}</span><span>{t('約 4 分鐘','About 4 minutes')}</span><span>{t('免費・不需註冊','Free · No sign-up')}</span></div></div>
+ <div className={"workspace "+(done?"finished":"in-flight")}><section className="quiz-card" aria-label={t('性格測驗','Personality quiz')}>
+ {!done?<><div className="quiz-meta"><span>{t('探索你的風格','DISCOVER YOUR STYLE')}</span><span>{String(step+1).padStart(2,'0')} <span className="muted">/ 20</span></span></div><div className="space-progress"><div className="starfield" aria-hidden="true">✦ · ˚ · ✧ · ˚ · ✦ · ˚ · ✧</div><div className="astronaut-position" style={{left:answers.filter(a=>a>=0).length*5+'%'}} aria-hidden="true"><Image src="/astronaut.png" alt="" width={100} height={100} className="astronaut" priority/></div><Progress value={answers.filter(a=>a>=0).length*5} aria-label={t('作答進度','Quiz progress')}/><span className="mission-caption">{t('自我探索任務','SELF-DISCOVERY MISSION')} · {answers.filter(a=>a>=0).length}/20</span></div><div className="question-content"><span className="question-kicker">{t('想像一下⋯⋯','PICTURE THIS…')}</span><h2 ref={heading} tabIndex={-1} id="question">{questions[step].q[en?1:0]}</h2><p className="question-hint">{t('選擇最符合你自然反應的一項。','Choose the response closest to your natural reaction.')}</p><RadioGroup aria-labelledby="question" value={answers[step]<0?'':String(answers[step])} onValueChange={value=>setAnswers(prev=>prev.map((a,i)=>i===step?Number(value):a))} className="choices">{[0,1,2,3].map(n=>{const i=(n+step)%4;return <label key={step+'-'+i} className={'choice '+(answers[step]===i?'selected':'')}><RadioGroupItem value={String(i)} aria-label={questions[step].a[i][en?1:0]}/><span className="choice-letter">{'ABCD'[n]}</span><span>{questions[step].a[i][en?1:0]}</span>{answers[step]===i&&<Check className="choice-check" size={19}/>}</label>})}</RadioGroup></div><div className="quiz-bottom"><button className="back" disabled={step===0} onClick={()=>setStep(s=>s-1)}><ArrowLeft size={17}/>{t('上一題','Back')}</button><button className="primary" disabled={answers[step]<0} onClick={()=>step===19?setDone(true):setStep(s=>s+1)}>{step===19?t('查看我的結果','See my results'):t('下一題','Next question')}<ArrowRight size={18}/></button></div></>:<div className="results"><div className="eyebrow">{t('你的溝通風格輪廓','YOUR COMMUNICATION PROFILE')}</div><h2 ref={heading} tabIndex={-1}>{leaders.map(b=>b.name[en?1:0]).join(' + ')}</h2><p>{leaders.length>1?t('你的最高分並列，呈現混合風格。','Your highest scores are tied: you show a blend of styles.'):t('這是本次回答中最突出的風格。','This is the most prominent style in your responses.')}</p><div className="score-list">{birds.map((b,i)=><div key={b.code}><div className="score-label"><span>{b.name[en?1:0]} <small>{b.code}</small></span><strong>{result[i]}%</strong></div><div className="score-track"><span style={{width:result[i]+'%',background:b.color}}/></div></div>)}</div><p className="method">{t('每題為所選風格加 1 分；百分比為該風格的選擇次數 ÷ 20。這不是人口百分位或診斷分數。','Each answer adds one point to a style. Percentages are each style’s selections divided by 20, not population percentiles or diagnostic scores.')}</p>{leaders.map(b=><div className="advice" key={b.code}><h3>{b.name[en?1:0]} · {t('你的溝通提示','Your communication tip')}</h3><p>{b.advice[en?1:0]}</p></div>)}<div className="share-panel"><h3>{t('找到你的同類了嗎？','Found your flock?')}</h3><p>{t('邀請朋友一起玩，發現彼此的溝通風格。','Invite a friend and discover how your styles connect.')}</p><div className="share-actions"><button className="primary" onClick={()=>shareResult()}><Share2 size={17}/>{t('分享給朋友','Share with friends')}</button><button className="secondary" onClick={()=>shareResult(true)}><Copy size={17}/>{t('複製連結','Copy link')}</button></div><p role="status">{shareMessage}</p>{shareUrl&&<input aria-label={t('分享連結','Share link')} readOnly value={shareUrl} onFocus={e=>e.currentTarget.select()}/>}</div><button className="primary" onClick={()=>{setAnswers(Array(20).fill(-1));setStep(0);setDone(false);setShareMessage('');setShareUrl('')}}><RotateCcw size={17}/>{t('重新測驗','Take it again')}</button></div>}
+ </section>{done&&<aside className="bird-guide"><Image src="/birds.png" alt={t("四隻 Q 版鳥：鴿子、貓頭鷹、孔雀、老鷹","Four chibi birds: dove, owl, peacock and eagle")} width={1536} height={1024} className="birds-art"/><div className="guide-title"><span>{t('四種鳥，四種風格','FOUR BIRDS. FOUR STYLES.')}</span><Feather size={18}/></div><p>{t('我們都有四種特質，只是比例不同。','We all carry all four styles, in different proportions.')}</p>{birds.map(b=><div className="bird-row" key={b.code}><span className="bird-initial" style={{background:b.tint,color:b.color}}>{b.code}</span><div><h3>{b.name[en?1:0]}<span>{b.label[en?1:0]}</span></h3><p>{b.desc[en?1:0]}</p></div></div>)}<div className="guide-note">{t('性格不是標籤。不同情境，也能展現不同的你。','A style is a starting point, not a label. Different situations bring out different sides of you.')}</div></aside>}</div>
+ <section className="coffee-card" id="coffee"><div className="coffee-icon"><Coffee size={27}/></div><div><h2>{t('喜歡這個小測驗？','Enjoyed this little discovery?')}</h2><p>{t('請我喝杯咖啡，支持更多自我探索的小工具。','A little coffee helps keep thoughtful tools like this brewing.')}</p></div><div className="coffee-action">{paymentLink?<a className="coffee-button" href={paymentLink} target="_blank" rel="noopener noreferrer">{t('請我喝咖啡','Buy me a coffee')} <strong>US$3</strong><ArrowRight size={16}/></a>:<button className="coffee-button" disabled>{t('咖啡贊助尚未開放','Coffee support coming soon')} <strong>US$3</strong></button>}<span>{paymentLink?t('透過 Stripe 安全付款・自願贊助','Secure payment with Stripe · Optional support'):t('測驗與完整結果皆免費','The quiz and full results are free')}</span></div></section>
+ </main><footer><span>DOPE TEST <span className="copyright">© 2026</span></span><p>{t('原創 DOPE 風格自我探索題目，並非官方量表或經驗證的心理評估；不適用於診斷或招聘決策。答案不會儲存於資料庫；完成時僅即時驗證答案，並以匿名瀏覽器識別碼計數。語言切換暫存答案最多 60 秒。','Original DOPE-inspired self-reflection questions, not an official or validated psychological assessment. Not for diagnosis or hiring decisions. Answers are validated on completion but not stored in the database. An anonymous browser identifier prevents duplicate counts. A language switch temporarily stores answers for up to 60 seconds.')}</p></footer></div>
+}
+
+
