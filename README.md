@@ -1,22 +1,36 @@
 # DOPE TEST
-繁體中文 / English 原創 DOPE 風格自我探索網站。20 題、四種風格比例、同分混合結果、溝通建議及手機版面。不是官方或經驗證心理量表。
+繁體中文 / English DOPE 風格自我探索網站。20 道原創題目、風格比例、混合結果、溝通建議、太空人進度動畫與分享功能。非官方或經驗證的心理量表。
 
-## 開發
-Node.js 22.13+。在 website 執行 npm ci、npm run dev；正式建置為 npm run build。
+## 開發與 Vercel
+Node.js 22.13+。在 website 執行 npm ci、npm run dev。正式建置 npm run build，啟動 npm start。框架為 Next.js 16.3.3。
+Vercel 連接此 GitHub repository，Root Directory 設為 website，Framework 設為 Next.js，Production Branch 為 main。
 
-## Stripe US$3 咖啡贊助
-1. 在你的 Stripe 正式帳戶建立「Buy me a coffee」一次性產品，價格 USD 3.00。
-2. 建立 Payment Link，固定數量 1，關閉可調整數量、促銷碼及自動稅額，保持結帳總額 US$3。不要啟用訂閱。
-3. 複製 website/.env.example 為 website/.env.local，填入 NEXT_PUBLIC_STRIPE_PAYMENT_LINK=https://buy.stripe.com/你的正式連結。
-4. 在部署環境設定同名建置環境變數，重新建置部署。這是公開連結，不需要 Stripe secret key。
-5. 開放前核對結帳商戶是你的帳戶、US$3、數量 1、非訂閱。沒有連結時按鈕停用，顯示尚未開放；測試連結會被拒絕。
-Stripe 文件：https://docs.stripe.com/payment-links/create
+## 設定
+將 website/.env.example 複製為 website/.env.local。正式值只放 Vercel Environment Variables，不可提交到 Git。
+- SUPABASE_URL：獨立 DOPE 專案 URL。
+- SUPABASE_PUBLISHABLE_KEY：公開 API key；仍由伺服器使用。
+- COUNTER_SECRET：至少 32 字元隨機秘密，只存在 Vercel 伺服器與本機忽略檔；資料庫只保存其 SHA-256。
+- NEXT_PUBLIC_SITE_URL：自訂正式域名；不設時自動採用 Vercel production domain。
+- GOOGLE_SITE_VERIFICATION：Google Search Console HTML 驗證 token（選填）。
+- NEXT_PUBLIC_STRIPE_PAYMENT_LINK：正式一次性 US$3 Payment Link（尚未提供）。
 
-## 計分與私隱
-每題四個回答分別對應 D/O/P/E，每題加 1 分，顯示位置按題目輪換。20 題全部完成才顯示結果；百分比為次數除以 20。最高分並列時顯示全部並列風格。答案只在頁面記憶體，切換語言保留答案，重新整理即清除。沒有帳戶、分析追蹤或答案資料庫；Stripe 在使用者開啟付款頁後處理付款資料。
-風格框架參考：https://dope.org.nz/ 。情境題與建議均為原創，未複製第三方量表。
+## 共用計數
+schema 在 website/database/counter.sql，專案 dope-test，ref iztzysfrujrozcpdhvim。dope_private schema 不對瀏覽器開放；資料表啟用 RLS 且不授予 anon/authenticated 表權限。
+伺服器簽發 HttpOnly、SameSite=Strict 匿名 cookie。完成 20 題後，即時驗證答案但不儲存答案，只以 HMAC 雜湊匿名識別碼去重。資料庫交易使用 row lock、唯一索引及原子更新；重送不增加。同一瀏覽器一年內只計一次；清除 cookie 或更換裝置可再被計數，因此不是經驗證的獨立人數。展示數字包含 3,125 初始基數，介面明確註明。這不是完整防機器人系統。
+dope_complete 為有 secret 驗證的 SECURITY DEFINER RPC，固定空 search_path；dope_get_count 只返回總數。Supabase linter 對刻意公開的 definer RPC 及 deny-all private RLS 發出提示，屬此設計預期；https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable 。
+資料庫斷線時顯示不可同步，不模擬加數，也不影響結果。twynzo-staging 沒有 DOPE 表，未作刪除。
+
+## SEO
+/zh-hant 與 /en 為預先產生的 HTML，各自有 title、description、canonical、hreflang、Open Graph、Twitter card 及 WebApplication JSON-LD。/ 308 導向 /zh-hant。/robots.txt 允許抓取，/sitemap.xml 列出兩個語言版本。
+在 Google Search Console 新增正式網址，完成擁有權驗證後提交 sitemap.xml，對兩個語言網址要求建立索引。不能保證 Google 收錄時間或排名。
+文件：https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
+
+## Stripe
+建立 Buy me a coffee 一次性產品 USD 3.00、固定數量 1、無訂閱，停用可調整數量、促銷碼及自動稅額。填入正式 buy.stripe.com 連結後重新部署。開放前核對商戶為你的帳戶與總額 US$3。未設定時入口停用。
+文件：https://docs.stripe.com/payment-links/create
 
 ## 驗證
-正式建置及 TypeScript 檢查通過。已檢查 20 題雙語完整性、四種主導結果、四方同分、百分比及非法／測試付款連結。
-已提供漸進增強的 complete_dope_quiz WebMCP 工具。當前環境未提供支援的 WebMCP 驗證上下文，未驗證該工具的瀏覽器註冊與呼叫；不支援時不影響一般測驗。未進行瀏覽器互動測試。
+Next.js production build 與 TypeScript 通過。已驗證雙語題目、四種主導風格、同分、計分與付款連結驗證。
+瀏覽器已確認答题進度、語言切換保留答案、結果才出現鳥類介紹、四方同分與複製分享文字。WebMCP 成功呼叫已驗證；其無效輸入檢查被審核用量限制中止。
+SQL 交易內驗證首次完成、重複去重、第二匿名訪客及錯誤 secret，全部 rollback，保留 3125 基數。
 
