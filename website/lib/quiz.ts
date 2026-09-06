@@ -30,6 +30,7 @@ export const questions:Question[] = [
 ];
 export function score(answers:number[]) { const counts=[0,0,0,0]; answers.forEach(a=>{if(Number.isInteger(a)&&a>=0&&a<4)counts[a]++}); return counts.map(n=>n*5); }
 export function validPaymentLink(value:string) { try { const u=new URL(value); return u.protocol==='https:' && u.hostname==='buy.stripe.com' && u.pathname.length>1 && !u.pathname.startsWith('/test_') && !u.username && !u.password; } catch { return false; } }
-const configuredLink=process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || '';
+const defaultPaymentLink='https://buy.stripe.com/28E14gdBRfTy4t61Vh73G00';
+const configuredLink=process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK || defaultPaymentLink;
 export const paymentLink=validPaymentLink(configuredLink)?configuredLink:'';
 

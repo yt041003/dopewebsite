@@ -12,7 +12,7 @@ Vercel 連接此 GitHub repository，Root Directory 設為 website，Framework �
 - COUNTER_SECRET：至少 32 字元隨機秘密，只存在 Vercel 伺服器與本機忽略檔；資料庫只保存其 SHA-256。
 - NEXT_PUBLIC_SITE_URL：自訂正式域名；不設時自動採用 Vercel production domain。
 - GOOGLE_SITE_VERIFICATION：Google Search Console HTML 驗證 token（選填）。
-- NEXT_PUBLIC_STRIPE_PAYMENT_LINK：正式一次性 US$3 Payment Link（尚未提供）。
+- NEXT_PUBLIC_STRIPE_PAYMENT_LINK：可選；用來覆蓋網站內建的正式一次性 US$3 Payment Link。
 
 ## 共用計數
 schema 在 website/database/counter.sql，專案 dope-test，ref iztzysfrujrozcpdhvim。dope_private schema 不對瀏覽器開放；資料表啟用 RLS 且不授予 anon/authenticated 表權限。
@@ -26,7 +26,7 @@ dope_complete 為有 secret 驗證的 SECURITY DEFINER RPC，固定空 search_pa
 文件：https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
 
 ## Stripe
-建立 Buy me a coffee 一次性產品 USD 3.00、固定數量 1、無訂閱，停用可調整數量、促銷碼及自動稅額。填入正式 buy.stripe.com 連結後重新部署。開放前核對商戶為你的帳戶與總額 US$3。未設定時入口停用。
+網站已連接 Buy me a coffee 一次性產品 USD 3.00、固定數量 1、無訂閱。正式付款連結內建於 `website/lib/quiz.ts`；如設定 `NEXT_PUBLIC_STRIPE_PAYMENT_LINK`，則以環境變數的正式 `buy.stripe.com` 連結取代。開放前核對商戶為你的帳戶與總額 US$3。
 文件：https://docs.stripe.com/payment-links/create
 
 ## 驗證
