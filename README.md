@@ -34,3 +34,5 @@ Next.js production build 與 TypeScript 通過。已驗證雙語題目、四種�
 瀏覽器已確認答题進度、語言切換保留答案、結果才出現鳥類介紹、四方同分與複製分享文字。WebMCP 成功呼叫已驗證；其無效輸入檢查被審核用量限制中止。
 SQL 交易內驗證首次完成、重複去重、第二匿名訪客及錯誤 secret，全部 rollback，保留 3125 基數。
 
+
+Production domain: https://twynzo.com (www redirects with 308). Production canonical URLs are pinned in website/lib/seo.ts. The previous Vercel hostname redirects while preserving paths. GoDaddy DNS: A @ 216.198.79.1; CNAME www ed011625202d22ea.vercel-dns-017.com. Existing email DNS records are preserved.
