@@ -4,6 +4,8 @@ export type Locale = typeof locales[number];
 // Public ownership proof issued by Google Search Console for this site's owner.
 const googleVerification=process.env.GOOGLE_SITE_VERIFICATION || 'QSX9KRZWeWKr-v-SfDE_bj6YwWjqrEF9oGilaXUhGTc';
 export function siteUrl() {
+ // Keep production and preview canonical URLs on the public custom domain.
+ if (process.env.NODE_ENV === 'production') return 'https://twynzo.com';
  const configured = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000');
  return new URL(configured).origin;
 }
