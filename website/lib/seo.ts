@@ -12,16 +12,16 @@ export function siteUrl() {
 }
 export function metadataFor(locale:Locale):Metadata {
  const en=locale==='en',base=siteUrl();
- const title=en?'Free DOPE Bird Personality Test | Communication Styles':'DOPE 鳥類性格測驗｜免費心理與溝通風格測試';
+ const title=en?'DOPE TEST: Free Bird Personality Test | Twynzo':'DOPE TEST 鳥類性格測驗｜免費人格測試 — Twynzo';
  const description=en?'Discover your Dove, Owl, Peacock and Eagle communication styles with 20 original questions. Free results, practical tips and a quiz to share with friends.':'20 道免費原創情境題，探索鴿子、貓頭鷹、孔雀、老鷹四種心理與溝通風格，查看比例及實用建議，分享給朋友一起玩。約 4 分鐘，不需註冊。';
- return {metadataBase:new URL(base),icons:{icon:'/favicon.svg'},title,description,alternates:{canonical:`/${locale}/dope`,languages:{'zh-Hant':'/zh-hant/dope',en:'/en/dope','x-default':'/zh-hant/dope'}},robots:{index:true,follow:true},openGraph:{type:'website',siteName:'Twynzo',title,description,url:`/${locale}/dope`,locale:en?'en_US':'zh_TW',alternateLocale:[en?'zh_TW':'en_US'],images:[{url:'/birds-pixel.png',alt:en?'Dove, Owl, Peacock and Eagle mascots':'鴿子、貓頭鷹、孔雀與老鷹吉祥物'}]},twitter:{card:'summary_large_image',title,description,images:['/birds-pixel.png']},verification:{google:[googleVerification,'a_ZXANbWS_HEjQGXwti1i2OfU3HXVSp1efxviY3woms']}};
+ return {metadataBase:new URL(base),icons:{icon:[{url:'/twynzo-icon.png',type:'image/png'}],apple:'/twynzo-icon.png'},title,description,alternates:{canonical:`/${locale}/dope`,languages:{'zh-Hant':'/zh-hant/dope',en:'/en/dope','x-default':'/zh-hant/dope'}},robots:{index:true,follow:true},openGraph:{type:'website',siteName:'Twynzo',title,description,url:`/${locale}/dope`,locale:en?'en_US':'zh_TW',alternateLocale:[en?'zh_TW':'en_US'],images:[{url:'/birds-pixel.png',alt:en?'Dove, Owl, Peacock and Eagle mascots':'鴿子、貓頭鷹、孔雀與老鷹吉祥物'}]},twitter:{card:'summary_large_image',title,description,images:['/birds-pixel.png']},verification:{google:[googleVerification,'a_ZXANbWS_HEjQGXwti1i2OfU3HXVSp1efxviY3woms']}};
 }
 
 
 
 export function exploreMetadata(locale:Locale,test?:typeof tests[number]):Metadata {
  const en=locale==='en',i=en?1:0,suffix=test?'/tests/'+test.slug:'';
- const title=test?test.name[i]+(en?' — Coming soon | Twynzo':'｜即將推出 — Twynzo'):(en?'Twynzo | Explore your inner universe':'Twynzo｜探索你的內在宇宙');
- const description=test?test.description[i]:(en?'Explore personality, communication and relationships with Twynzo. Start the free bilingual DOPE quiz and discover more self-reflection tests.':'透過 Twynzo 探索人格、溝通與親密關係。立即體驗免費中英文 DOPE 鳥類性格測驗，發現更多認識自己的方式。');
- return {...metadataFor(locale),title,description,robots:{index:!test,follow:true},alternates:{canonical:`/${locale}${suffix}`,languages:{'zh-Hant':`/zh-hant${suffix}`,en:`/en${suffix}`,'x-default':`/zh-hant${suffix}`}},openGraph:{type:'website',siteName:'Twynzo',title,description,url:`/${locale}${suffix}`,images:['/birds-pixel.png']},twitter:{card:'summary_large_image',title,description,images:['/birds-pixel.png']}};
+ const title=test?.slug==='personality-16'?(en?'MBTI & 16 Personality Types Explained | Twynzo':'MBTI 人格測試指南｜16 型人格與 DOPE 差異 — Twynzo'):test?test.name[i]+(en?' — Coming soon | Twynzo':'｜即將推出 — Twynzo'):(en?'Twynzo | DOPE TEST, MBTI & Personality Exploration':'Twynzo｜免費 DOPE TEST 人格測試・MBTI 人格探索');
+ const description=test?.slug==='personality-16'?(en?'Learn about MBTI’s four preference pairs, 16 personality types and how they differ from DOPE. Read the guide and preview Twynzo’s upcoming original personality quiz.':'認識 MBTI 四組偏好、16 型人格與 DOPE TEST 的差異，了解人格測試如何幫助自我探索。閱讀入門指南，預覽 Twynzo 即將推出的原創人格測驗。'):test?test.description[i]:(en?'Explore personality, communication and relationships with Twynzo. Start the free bilingual DOPE quiz and discover more self-reflection tests.':'透過 Twynzo 探索人格、溝通與親密關係。立即體驗免費中英文 DOPE 鳥類性格測驗，發現更多認識自己的方式。');
+ return {...metadataFor(locale),title,description,robots:{index:!test||test.slug==='personality-16',follow:true},alternates:{canonical:`/${locale}${suffix}`,languages:{'zh-Hant':`/zh-hant${suffix}`,en:`/en${suffix}`,'x-default':`/zh-hant${suffix}`}},openGraph:{type:'website',siteName:'Twynzo',title,description,url:`/${locale}${suffix}`,images:['/birds-pixel.png']},twitter:{card:'summary_large_image',title,description,images:['/birds-pixel.png']}};
 }
