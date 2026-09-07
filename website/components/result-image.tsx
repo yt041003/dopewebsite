@@ -37,7 +37,7 @@ export default function ResultImage({ values, en }: { values: number[]; en: bool
     c.fillStyle = '#c3aceb'; c.fillRect(100, y + 23, 876 * values[i] / 100, 28);
    });
    text(en ? 'Which bird are you? Take the free quiz.' : '你是哪一種鳥？一起來免費測驗！', 100, 1140, 30);
-   text('twynzo.com', 100, 1200, 38, '#d5c1ff');
+   text('twynzo.com/'+(en?'en':'zh-hant')+'/dope', 100, 1200, 30, '#d5c1ff');
    text(en ? 'Self-reflection, not a psychological diagnosis.' : '自我探索參考，並非心理診斷。', 100, 1253, 21, '#aaa4b8');
    const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(Error('Export failed')), 'image/png'));
    setUrl(URL.createObjectURL(blob));
