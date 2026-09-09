@@ -1,4 +1,4 @@
-import Explore from '@/components/explore';
+import PersonalityQuiz from '@/components/personality-quiz';
 import { tests } from '@/lib/catalog';
 import { locales,exploreMetadata,type Locale } from '@/lib/seo';
 import { notFound } from 'next/navigation';
@@ -9,5 +9,5 @@ export async function generateMetadata({params}:{params:Promise<{locale:string;t
 }
 export default async function Page({params}:{params:Promise<{locale:string;test:string}>}) {
  const {locale,test:slug}=await params;const test=tests.find(t=>t.slug===slug);if(!test||!locales.includes(locale as Locale))notFound();
- return <Explore locale={locale as Locale} test={test}/>;
+ return <PersonalityQuiz locale={locale as Locale} slug={test.slug}/>;
 }

@@ -14,7 +14,7 @@ export function readVisitor(value:string|undefined){
 }
 export function visitorHash(id:string){return createHmac('sha256',secret()).update('visitor:'+id).digest('hex');}
 export function validAnswers(value:unknown):value is number[]{return Array.isArray(value)&&value.length===20&&value.every(n=>Number.isInteger(n)&&n>=0&&n<4);}
-export async function counterRpc(name:'dope_get_count'|'dope_complete',args:Record<string,unknown>={}){
+export async function counterRpc(name:'dope_get_count'|'dope_complete'|'twynzo_get_count'|'twynzo_complete',args:Record<string,unknown>={}){
  if(!configured())throw Error('Counter not configured');
  const response=await fetch(`${process.env.SUPABASE_URL}/rest/v1/rpc/${name}`,{method:'POST',headers:{apikey:process.env.SUPABASE_PUBLISHABLE_KEY!,'Content-Type':'application/json'},body:JSON.stringify(args),cache:'no-store',signal:AbortSignal.timeout(8000)});
  if(!response.ok)throw Error('Counter unavailable');
@@ -23,3 +23,5 @@ export async function counterRpc(name:'dope_get_count'|'dope_complete',args:Reco
  return data as {total:number;added?:boolean};
 }
 export function completeVisitor(id:string){return counterRpc('dope_complete',{p_visitor:visitorHash(id),p_secret:secret()});}
+
+export function completeTestVisitor(slug:string,id:string){return counterRpc('twynzo_complete',{p_slug:slug,p_visitor:visitorHash(id),p_secret:secret()});}

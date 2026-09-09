@@ -3,7 +3,8 @@ import { useEffect, useState } from 'react';
 import { Download } from 'lucide-react';
 import { birds } from '@/lib/quiz';
 
-export default function ResultImage({ values, en }: { values: number[]; en: boolean }) {
+type Card={brand:string;title:string;subtitle:string;labels:string[];displayValues:string[];accent:string;path:string};
+export default function ResultImage({ values, en, card }: { values: number[]; en: boolean; card?:Card }) {
  const [url, setUrl] = useState('');
  const [busy, setBusy] = useState(false);
  const [error, setError] = useState(false);
@@ -19,25 +20,25 @@ export default function ResultImage({ values, en }: { values: number[]; en: bool
    c.fillStyle = '#191822'; c.fillRect(54, 54, 972, 1242);
    c.strokeStyle = '#777086'; c.lineWidth = 3; c.strokeRect(54, 54, 972, 1242);
    const text = (s: string, x: number, y: number, size: number, color = '#f3effa') => { c.fillStyle = color; c.font = `600 ${size}px Arial, "Microsoft JhengHei", sans-serif`; c.fillText(s, x, y); };
-   text('DOPE TEST / INNER SPACE', 100, 124, 28, '#bcb0dd');
+   text(card?.brand??'DOPE TEST / INNER SPACE', 100, 124, 28, '#bcb0dd');
    const astronaut = new window.Image(); astronaut.src = '/astronaut-pixel.svg';
    await astronaut.decode(); c.imageSmoothingEnabled = false; c.drawImage(astronaut, 790, 155, 190, 190);
-   text(en ? 'MY COMMUNICATION' : '我的溝通風格', 100, 225, 40);
+   text(card?(en?'MY PERSONALITY':'我的探索結果'):(en ? 'MY COMMUNICATION' : '我的溝通風格'), 100, 225, 40);
    if (en) text('PROFILE', 100, 276, 40);
    const leaders = birds.filter((_, i) => values[i] === Math.max(...values));
-   const names = leaders.map(b => b.name[en ? 1 : 0]);
+   const names = card?[card.title]:leaders.map(b => b.name[en ? 1 : 0]);
    const lines = names.length > 2 ? [names.slice(0, 2).join(' + '), names.slice(2).join(' + ')] : [names.join(' + ')];
-   lines.forEach((line, i) => text(line, 100, 375 + i * 60, 48, '#d5c1ff'));
-   text(en ? 'Four styles. A constellation that is you.' : '四種特質，組成獨一無二的你。', 100, 492, 27, '#bcb7c9');
+   lines.forEach((line, i) => text(line, 100, 375 + i * 60, 48, card?.accent??'#d5c1ff'));
+   text(card?.subtitle??(en ? 'Four styles. A constellation that is you.' : '四種特質，組成獨一無二的你。'), 100, 492, 27, '#bcb7c9');
    birds.forEach((b, i) => {
     const y = 578 + i * 135;
-    text(`${b.code}  ${b.name[en ? 1 : 0]}`, 100, y, 32);
-    c.textAlign = 'right'; text(`${values[i]}%`, 976, y, 32, '#d5c1ff'); c.textAlign = 'left';
+    text(card?.labels[i]??`${b.code}  ${b.name[en ? 1 : 0]}`, 100, y, 32);
+    c.textAlign = 'right'; text(card?.displayValues[i]??`${values[i]}%`, 976, y, 32, card?.accent??'#d5c1ff'); c.textAlign = 'left';
     c.fillStyle = '#302d3d'; c.fillRect(100, y + 23, 876, 28);
-    c.fillStyle = '#c3aceb'; c.fillRect(100, y + 23, 876 * values[i] / 100, 28);
+    c.fillStyle = card?.accent??'#c3aceb'; c.fillRect(100, y + 23, 876 * values[i] / 100, 28);
    });
-   text(en ? 'Which bird are you? Take the free quiz.' : '你是哪一種鳥？一起來免費測驗！', 100, 1140, 30);
-   text('twynzo.com/'+(en?'en':'zh-hant')+'/dope', 100, 1200, 30, '#d5c1ff');
+   text(en ? 'Discover your style. Take the free quiz.' : '一起探索自己，來免費測驗！', 100, 1140, 30);
+   text('twynzo.com'+(card?.path??('/'+(en?'en':'zh-hant')+'/dope')), 100, 1200, 22, card?.accent??'#d5c1ff');
    text(en ? 'Self-reflection, not a psychological diagnosis.' : '自我探索參考，並非心理診斷。', 100, 1253, 21, '#aaa4b8');
    const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(b => b ? resolve(b) : reject(Error('Export failed')), 'image/png'));
    setUrl(URL.createObjectURL(blob));
@@ -46,6 +47,6 @@ export default function ResultImage({ values, en }: { values: number[]; en: bool
  return <div className="result-export">
   <button className="secondary" disabled={busy} onClick={create}><Download size={17}/>{busy ? (en ? 'Creating image…' : '正在製作圖片…') : (en ? 'Save result image' : '儲存結果圖片')}</button>
   {error && <p role="alert">{en ? 'Could not create the image. Please try again.' : '圖片製作失敗，請再試一次。'}</p>}
-  {url && <div className="result-image-preview"><img src={url} alt={en ? 'Your DOPE result card' : '你的 DOPE 測驗結果圖卡'} width={1080} height={1350}/><a className="primary" href={url} download="DOPE-result.png"><Download size={17}/>{en ? 'Download PNG' : '下載 PNG 圖片'}</a><p>{en ? 'Save the image, then upload it to Instagram or Threads. On mobile, you can also touch and hold the image to save it.' : '儲存圖片後，即可上傳至 IG 或 Threads。手機亦可長按圖片儲存。'}</p></div>}
+  {url && <div className="result-image-preview"><img src={url} alt={en ? 'Your personality result card' : '你的人格測驗結果圖卡'} width={1080} height={1350}/><a className="primary" href={url} download={card?"Twynzo-result.png":"DOPE-result.png"}><Download size={17}/>{en ? 'Download PNG' : '下載 PNG 圖片'}</a><p>{en ? 'Save the image, then upload it to Instagram or Threads. On mobile, you can also touch and hold the image to save it.' : '儲存圖片後，即可上傳至 IG 或 Threads。手機亦可長按圖片儲存。'}</p></div>}
  </div>;
 }
