@@ -36,7 +36,7 @@
 | P2 | 怎樣看人格結果 | 理解分數與同分 | 比例、接近分數、重測 | /guides/read-personality-results | /guides | 方法、16 型、INFP | 16 型 / DOPE | 是；既有 cornerstone |
 | P2 | DOPE 與 16 型比較 | 選擇合適測驗 | 框架用途與差異 | /guides/dope-vs-16-types | /guides | 測驗總覽、DOPE、16 型、ISTJ | DOPE / 16 型 | 是；既有 cornerstone |
 | P2 | 不同風格怎樣合作 | 解決日常溝通問題 | 速度、資訊、關係需要 | /guides/communication-differences | /guides | 四鳥頁、DOPE、戀愛測驗 | DOPE / 戀愛 | 是；既有 cornerstone |
-| P2 | 怎樣向伴侶說明需要 | 把需要轉成可回應請求 | 表達、界線、回應例子 | /guides/expressing-relationship-needs | /guides/communication-differences | 戀愛測驗、Dove、方法、相關溝通指南 | 戀愛 | 完成原創例子與審閱後才索引 |
+| P2 | 怎樣向伴侶說明需要 | 把需要轉成可回應請求 | 表達、界線、回應例子 | /guides/expressing-relationship-needs | /guides/communication-differences | 戀愛測驗、Dove、方法、相關溝通指南 | 戀愛 | 已在本次發布中英文原創指南 |
 | P2 | 給回饋時怎樣兼顧清楚與尊重 | 實際工作溝通 | 觀察、影響、請求 | /guides/giving-useful-feedback | /guides/communication-differences | Owl、Eagle、Dove、DOPE | DOPE | 有完整實例及反例後才索引 |
 | P2 | 生活中怎樣觀察自己的偏好 | 把測驗轉成練習 | 一週反思紀錄與情境 | /guides/observe-preferences | /guides/read-personality-results | 16 型、INFP、ESTJ、方法 | 16 型 | 先確認與既有結果指南不重複 |
 | P3 | 可列印反思工作紙 | 離線個人整理 | 可填寫日常觀察表 | /tools/reflection-sheet | /guides/observe-preferences | 觀察指南、結果解讀、測驗總覽 | 全部 | 實驗先 noindex；有獨立效用再評估 |
@@ -59,4 +59,25 @@
 
 ## Monetization readiness
 
-目前只保留自願 Stripe 咖啡贊助。廣告、affiliate 或 premium 尚未實作。未來先確認內容效用、隱私要求、清楚揭露及保留版位以避免版面跳動；不要讓付費提示暗示結果因此更準確。平台運作身份與公眾聯絡方式應由擁有人提供，不能虛構。
+目前只啟用自願 Stripe 咖啡贊助。廣告、affiliate、premium 與 compatibility 已有未啟用的介面／資料模型，沒有真實付費產品或廣告上線。未來先確認內容效用、隱私要求、清楚揭露及保留版位以避免版面跳動；不要讓付費提示暗示結果因此更準確。平台運作身份與公眾聯絡方式應由擁有人提供，不能虛構。
+
+
+## Growth release additions and controlled candidates
+
+以下加上原表合計約 40 個不同頁面題目（雙語版本不重複計作題目）。本次只新增兩篇指南；其餘候選必須通過內容檢查及需求驗證。各列繼承上表的雙語網址格式。
+
+| Priority | Page / suffix | Distinct intent | Parent / related links | Quiz | Status / index decision |
+|---|---|---|---|---|---|
+| P1 | INFP 戀愛 `/guides/infp-love` | 理想、獨處與清楚期待 | /personality/infp, /guides/expressing-relationship-needs | Love | Published in this release; index |
+| P1 | 人格閱讀地圖 `/personality` | 選擇類型文章 | /tests, sixteen profiles | Personality 16 | Existing; index |
+| P1 | 指南總覽 `/guides` | 按問題選文章 | Five published guides | All | Existing; index |
+| P1 | 關於 `/about` | 了解製作者與用途 | /methodology, /tests | All | Existing; index |
+| P1 | 方法 `/methodology` | 理解計分與限制 | /privacy, results guide | All | Existing; index |
+| P1 | 隱私 `/privacy` | 了解資料與分享 | /terms, /methodology | All | Existing; index |
+| P1 | 條款 `/terms` | 了解使用範圍 | /privacy, /about | All | Existing; index |
+| P2 | E / I `/guides/extraversion-introversion` | 區分社交行為、恢復需要與情境 | /personality, results guide | Personality 16 | Proposed; publish only with distinct practical exercises |
+| P2 | INFP vs INFJ `/guides/infp-vs-infj` | 比較安排偏好，避免標籤診斷 | Both profiles, results guide | Personality 16 | Proposed; require actual demand and useful examples |
+| P2 | INTJ 戀愛 `/guides/intj-love` | 解難與情感支持的差異 | /personality/intj, relationship needs | Love | Proposed; first check whether expanding INTJ is sufficient |
+| P3 | 配對反思 `/compatibility` | 用兩組偏好開始對話 | /tests, communication guide | Personality 16 / Love | Foundation only, no route; prototype noindex before eligibility review |
+
+Do not publish every possible career, romantic pair or dimension combination. An internal model supporting pairs is not search-demand evidence. Review page eligibility with CONTENT-QUALITY-CHECKLIST.md and use SEARCH-CONSOLE-PLAYBOOK.md for measurement.
