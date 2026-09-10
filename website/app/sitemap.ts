@@ -1,3 +1,4 @@
 import type {MetadataRoute} from 'next';
-import {siteUrl,locales} from '@/lib/seo';
-export default function sitemap():MetadataRoute.Sitemap { const base=siteUrl();return ['', '/dope', '/tests/personality-16', '/tests/love-personality'].flatMap(suffix=>locales.map(locale=>({url:`${base}/${locale}${suffix}`,alternates:{languages:{'zh-Hant':`${base}/zh-hant${suffix}`,en:`${base}/en${suffix}`}}}))); }
+import {locales} from '@/lib/seo';
+import {publicPaths,localizedUrl,alternateUrls} from '@/lib/page-seo';
+export default function sitemap():MetadataRoute.Sitemap {return publicPaths.flatMap(path=>locales.map(locale=>({url:localizedUrl(locale,path),alternates:{languages:alternateUrls(path)}})));}

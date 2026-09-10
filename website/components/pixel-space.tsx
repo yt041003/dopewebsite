@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 export default function PixelSpace({en}:{en:boolean}) {
  const host=useRef<HTMLDivElement>(null);
  const [paused,setPaused]=useState(false);
+ useEffect(()=>{document.documentElement.classList.toggle('motion-paused',paused);return()=>document.documentElement.classList.remove('motion-paused');},[paused]);
  useEffect(()=>{
   const element=host.current;
   if(!element)return;
   let disposed=false,cleanup=()=>{};
-  void import('three').then(THREE=>{
+  const initialMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  if(initialMotion.matches)return;
+  const deferred=window.setTimeout(()=>{void import('three').then(THREE=>{
    if(disposed)return;
    let renderer:InstanceType<typeof THREE.WebGLRenderer>;
    try {renderer=new THREE.WebGLRenderer({alpha:true,antialias:false,powerPreference:'low-power'});}catch{return;}
@@ -18,7 +21,7 @@ export default function PixelSpace({en}:{en:boolean}) {
    const camera=new THREE.PerspectiveCamera(60,1,0.1,100);
    camera.position.z=12;
    const geometry=new THREE.BufferGeometry();
-   const positions=new Float32Array(650*3);
+   const positions=new Float32Array((window.innerWidth<700?220:500)*3);
    let seed=412;
    const random=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};
    for(let i=0;i<positions.length;i+=3){positions[i]=(random()-.5)*65;positions[i+1]=(random()-.5)*40;positions[i+2]=-random()*25;}
@@ -37,8 +40,8 @@ export default function PixelSpace({en}:{en:boolean}) {
    renderer.domElement.addEventListener('webglcontextlost',contextLost);renderer.domElement.addEventListener('webglcontextrestored',contextRestored);
    resize();sync();
    cleanup=()=>{cancelAnimationFrame(frame);window.removeEventListener('resize',resize);document.removeEventListener('visibilitychange',sync);motion.removeEventListener('change',sync);renderer.domElement.removeEventListener('webglcontextlost',contextLost);renderer.domElement.removeEventListener('webglcontextrestored',contextRestored);geometry.dispose();material.dispose();renderer.dispose();renderer.domElement.remove();};
-  }).catch(()=>{});
-  return()=>{disposed=true;cleanup();};
+  }).catch(()=>{});},500);
+  return()=>{disposed=true;window.clearTimeout(deferred);cleanup();};
  },[paused]);
- return <><div className="pixel-universe" ref={host} aria-hidden="true"/><button className="motion-toggle" aria-pressed={paused} onClick={()=>{setPaused(p=>!p);document.documentElement.classList.toggle('motion-paused',!paused);}}>{paused?(en?'▶ Play stars':'▶ 播放星空'):(en?'Ⅱ Pause stars':'Ⅱ 暫停星空')}</button></>;
+ return <><div className="pixel-universe" ref={host} aria-hidden="true"/><button className="motion-toggle" aria-pressed={paused} onClick={()=>setPaused(p=>!p)}>{paused?(en?'▶ Play stars':'▶ 播放星空'):(en?'Ⅱ Pause stars':'Ⅱ 暫停星空')}</button></>;
 }

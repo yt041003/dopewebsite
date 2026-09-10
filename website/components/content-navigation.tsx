@@ -1,0 +1,6 @@
+import type {Locale} from '@/lib/seo';
+import {breadcrumbPaths,linkTitle} from '@/lib/page-seo';
+export function JsonLd({data}:{data:unknown}){return <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(data).replace(/</g,'\\u003c')}}/>;}
+export function Breadcrumbs({locale,path}:{locale:Locale;path:string}){return <nav className="breadcrumbs" aria-label={locale==='en'?'Breadcrumbs':'目前位置'}><ol>{breadcrumbPaths(path).map((p,i,a)=><li key={p}>{i<a.length-1?<a href={`/${locale}${p}`}>{linkTitle(p,locale)}</a>:<span aria-current="page">{linkTitle(p,locale)}</span>}</li>)}</ol></nav>;}
+export function ResourceLinks({locale,paths}:{locale:Locale;paths:string[]}){return <ul className="resource-links">{paths.map(p=><li key={p}><a href={`/${locale}${p}`}>{linkTitle(p,locale)} <span aria-hidden="true">↗</span></a></li>)}</ul>;}
+export function SiteResources({locale}:{locale:Locale}){return <nav className="site-resources" aria-label={locale==='en'?'Site information':'網站資訊'}>{['/tests','/guides','/about','/methodology','/privacy','/terms'].map(p=><a href={`/${locale}${p}`} key={p}>{({ '/tests':['測驗','Tests'],'/guides':['指南','Guides'],'/about':['關於','About'],'/methodology':['測驗方法','Methodology'],'/privacy':['隱私','Privacy'],'/terms':['條款','Terms']} as Record<string,string[]>)[p][locale==='en'?1:0]}</a>)}</nav>;}
