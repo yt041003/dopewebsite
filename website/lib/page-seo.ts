@@ -22,11 +22,11 @@ export function breadcrumbPaths(path:string):string[]{
  if(path.startsWith('/tests/')||path==='/dope')return ['', '/tests',path];
  return ['',path];
 }
-export function pageSchema(locale:Locale,path:string,title:string,description:string,article=false,published?:string,updated?:string){
+export function pageSchema(locale:Locale,path:string,title:string,description:string,article=false,published?:string,updated?:string,quiz=false){
  const base=siteUrl(),url=localizedUrl(locale,path);
  const publisher={'@type':'Organization','@id':base+'/#organization',name:'Twynzo',url:base,logo:{'@type':'ImageObject',url:base+'/twynzo-icon.png'}};
  const website={'@type':'WebSite','@id':base+'/#website',name:'Twynzo',alternateName:'TWYNZO',url:base,inLanguage:['zh-Hant','en'],publisher:{'@id':base+'/#organization'}};
- const webpage={'@type':'WebPage','@id':url+'#webpage',url,name:title,description,inLanguage:locale==='en'?'en':'zh-Hant',isPartOf:{'@id':base+'/#website'}};
+ const webpage={'@type':'WebPage','@id':url+'#webpage',url,name:title,description,inLanguage:locale==='en'?'en':'zh-Hant',isPartOf:{'@id':base+'/#website'},...(quiz?{mainEntity:{'@id':url+'#quiz'}}:{})};
  const crumbs={'@type':'BreadcrumbList',itemListElement:breadcrumbPaths(path).map((p,i)=>({'@type':'ListItem',position:i+1,name:linkTitle(p,locale),item:localizedUrl(locale,p)}))};
- return {'@context':'https://schema.org','@graph':[publisher,website,webpage,...(path?[crumbs]:[]),...(article?[{'@type':'Article',headline:title,description,...(published?{datePublished:published}:{}),...(updated?{dateModified:updated}:{}),inLanguage:webpage.inLanguage,mainEntityOfPage:{'@id':url+'#webpage'},author:publisher,publisher,image:base+'/twynzo-icon.png'}]:[])]};
+ return {'@context':'https://schema.org','@graph':[publisher,website,webpage,...(quiz?[{'@type':'WebApplication','@id':url+'#quiz',name:title,url,inLanguage:webpage.inLanguage,description,applicationCategory:'LifestyleApplication',operatingSystem:'Any',isAccessibleForFree:true,offers:{'@type':'Offer',price:'0',priceCurrency:'USD'},publisher:{'@id':base+'/#organization'}}]:[]),...(path?[crumbs]:[]),...(article?[{'@type':'Article',headline:title,description,...(published?{datePublished:published}:{}),...(updated?{dateModified:updated}:{}),inLanguage:webpage.inLanguage,mainEntityOfPage:{'@id':url+'#webpage'},author:publisher,publisher,image:base+'/twynzo-icon.png'}]:[])]};
 }

@@ -6,8 +6,8 @@ export const quizDestinations:Record<QuizKind,{path:string;label:readonly [strin
  'love-personality':{path:'/tests/love-personality',label:['開始免費戀愛人格測驗','Take the free love personality quiz'],prompt:['想更清楚自己怎樣表達在乎？用結果開啟一段關於需要的對話。','Explore how you show care and use the result to start a conversation about needs.']},
 };
 export function quizForContent(path:string):QuizKind|null {
- if(path.startsWith('/dope/')||path==='/guides/communication-differences')return 'dope';
- if(path==='/guides/infp-love'||path==='/guides/expressing-relationship-needs')return 'love-personality';
+ if(path.startsWith('/dope/')||path==='/guides/communication-differences'||path==='/guides/dope-team-exercise')return 'dope';
+ if(path==='/guides/relationship-check-in'||path==='/guides/infp-love'||path==='/guides/expressing-relationship-needs')return 'love-personality';
  if(path.startsWith('/personality')||path.startsWith('/guides/'))return 'personality-16';
  return null;
 }

@@ -81,3 +81,15 @@
 | P3 | 配對反思 `/compatibility` | 用兩組偏好開始對話 | /tests, communication guide | Personality 16 / Love | Foundation only, no route; prototype noindex before eligibility review |
 
 Do not publish every possible career, romantic pair or dimension combination. An internal model supporting pairs is not search-demand evidence. Review page eligibility with CONTENT-QUALITY-CHECKLIST.md and use SEARCH-CONSOLE-PLAYBOOK.md for measurement.
+
+## Implemented controlled batch — 2026-09-12
+
+These three concepts are implemented in both locales (six URLs). Search demand is a hypothesis until GSC/SERP data confirms it; no volume or ranking estimates were used.
+
+| Primary intent / topic | Secondary topics | User / format | Canonical suffix | Parent / incoming links | Outgoing links | Unique value |
+|---|---|---|---|---|---|---|
+| MBTI letters meaning / MBTI 字母意思 | Four pairs, percentages, X ties, observation | Quiz beginner; reference + worksheet | /guides/personality-preferences | /guides, /personality, 16-type quiz reading, result-reading guide | 16-type quiz, personality hub, result reading, framework comparison, methodology | One consolidated comparison, one shared situation, seven-day observation template; source attribution distinguishes official concepts from original scoring |
+| DOPE team activity / DOPE 團隊活動 | Communication needs, handovers, facilitation | Small team/friends; timed exercise | /guides/dope-team-exercise | /guides, DOPE reading, communication-differences, Dove profile | DOPE, four birds, communication guide, methodology | Voluntary 15-minute script, four task checks, worked handover and team agreement |
+| Relationship check-in questions / 情侶溝通問題 | Listening, appreciation, requests, weekly agreement | Willing partners; agenda + questions | /guides/relationship-check-in | /guides, love quiz reading, expressing-needs, INFP-love | Love quiz, expressing needs, INFP-love, communication, methodology | Mutual ten-minute agenda, example and reusable agreement; no compatibility prediction |
+
+Intent boundaries: main quiz routes own 'take a test'; existing /guides/read-personality-results owns general interpretation; /guides/dope-vs-16-types owns framework comparison; expressing-relationship-needs owns making one person's request. New pages support those owners, not duplicate them. No separate letter-pair pages or mass personality-pair variants were created. Programmatic decision: TEST this batch; NO-GO for automatic compatibility or keyword permutations.

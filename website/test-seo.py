@@ -86,12 +86,19 @@ def inspect(path):
     assert {a['hreflang']:a['href'] for a in p.links if a.get('hreflang')} == expected, (path, 'hreflang')
     for name in ['og:title','og:description','og:url','og:image','twitter:card','twitter:title','twitter:description','twitter:image']:
         assert len(p.meta(name)) == 1 and p.meta(name)[0], (path,name)
+    assert p.meta('og:locale') == ['en_US' if path.startswith('/en') else 'zh_TW'], (path,'OG locale')
+    assert p.meta('og:locale:alternate') == ['zh_TW' if path.startswith('/en') else 'en_US'], (path,'OG alternate locale')
     assert p.meta('og:url') == [PUBLIC+path], (path,'OG URL')
     assert all('alt' in a and a.get('width') and a.get('height') for a in p.images), (path,'image alt/size')
     assert p.schemas, (path,'JSON-LD')
     graph = [n for schema in p.schemas for n in schema.get('@graph',[schema])]
     types = [n.get('@type') for n in graph]
     assert 'WebSite' in types and 'WebPage' in types and 'Organization' in types, (path,types)
+    if suffix in ['/dope','/tests/personality-16','/tests/love-personality']:
+        apps=[n for n in graph if n.get('@type')=='WebApplication']
+        assert len(apps)==1 and apps[0]['isAccessibleForFree'] is True, (path,'quiz schema')
+        assert apps[0]['@id']==PUBLIC+path+'#quiz' and apps[0]['offers']['price']=='0'
+        assert next(n for n in graph if n.get('@type')=='WebPage')['mainEntity']['@id']==apps[0]['@id']
     if suffix:
         assert 'BreadcrumbList' in types, (path,'breadcrumbs')
         crumbs = next(n for n in graph if n.get('@type')=='BreadcrumbList')['itemListElement']

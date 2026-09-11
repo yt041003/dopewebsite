@@ -20,7 +20,7 @@ async function load(name){return import(pathToFileURL(prepare(name)).href);}
 try {
 const {contentPages}=await load('editorial'),{typeProfiles}=await load('type-content'),{quizForContent,quizDestinations,stableResultPath}=await load('growth');
 const paths=new Set(['','/dope','/tests/personality-16','/tests/love-personality',...contentPages.map(p=>p.path)]);
-assert.equal(contentPages.length,32);assert.equal(paths.size,36);
+assert.equal(contentPages.length,35);assert.equal(paths.size,39);
 for(const page of contentPages){
  assert.ok(page.title.every(Boolean)&&page.description.every(Boolean));
  assert.ok(page.sections.every(s=>s.heading.length===2&&s.body.length===2&&s.body.every(Boolean)));
@@ -29,6 +29,10 @@ for(const page of contentPages){
  if(quiz)assert.ok(paths.has(quizDestinations[quiz].path));
  if(page.path.startsWith('/personality/'))assert.equal(page.sections.length,10);
  if(page.path.startsWith('/dope/'))assert.equal(page.sections.length,8);
+}
+for(const [path,kind] of [['/guides/personality-preferences','personality-16'],['/guides/dope-team-exercise','dope'],['/guides/relationship-check-in','love-personality']]){
+ const page=contentPages.find(p=>p.path===path);assert.ok(page);assert.equal(quizForContent(path),kind);assert.ok(page.sections.some(s=>s.worksheet?.every(Boolean)));assert.ok(contentPages.filter(p=>p.path!==path).some(p=>p.links.includes(path)));
+ for(const section of page.sections){if(section.table){assert.ok(section.table.rows.every(row=>row.length===section.table.headers.length));}if(section.items)assert.ok(section.items.every(item=>item.length===2&&item.every(Boolean)));}
 }
 const {comparePreferences}=await load('compatibility');
 const keys=new Set();
