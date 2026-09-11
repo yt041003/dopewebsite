@@ -1,6 +1,6 @@
 # Twynzo SEO execution — 2026-09-12
 
-Status at preparation: implemented and verified locally; production verification is recorded in the release section below. Previous production commit: e8dddcc5b7cc13e88300691babcff6521d0a3100. No pre-existing uncommitted changes were present.
+Status: implemented, deployed and verified on twynzo.com; see the release evidence below. Previous production commit: e8dddcc5b7cc13e88300691babcff6521d0a3100. No pre-existing uncommitted changes were present.
 
 ## Initial condition and evidence
 
@@ -94,4 +94,8 @@ Next batch candidates (research before creation): giving constructive feedback w
 
 ## Release verification
 
-Pending at report preparation. Confirm production independently after the Git deployment; see SEO-MONITORING.md for pinned baseline IDs and commands.
+Content release commit: **872f037fcdfab95b77db6f499a35bbb71f055343**. GitHub Vercel status: success. Vercel deployment https://vercel.com/yt041003s-projects/dopewebsite/8Ra5Uj1y6tWYF8q7qVVupY9fmvSK was visibly Ready / Production / Current with twynzo.com assigned. Final live regression passed **all 78 URLs**. The first pre-ready attempt saw the old homepage OG tags; the final run occurred after successful deployment and passed.
+
+Across all eight pre-change template comparisons: **0 critical findings**. Three expected schema-modified warnings correspond to the three quiz graph updates; remaining triggered findings were informational HTML-content hashes. No title, canonical, robots or H1 regressions were detected. Root alone: 0 warnings, 1 informational hash change. New accepted SQLite baselines are IDs **9–19**, including all three new guide templates, while IDs 1–8 are preserved. The full accepted live crawl and summaries are excluded from Git.
+
+Before → live after: public URLs **72 → 78**; missing OG locale **6 → 0**; quiz pages with free WebApplication schema **2 → 6**; practical guides with reusable worksheet blocks **0 → 6 localized URLs**. Google indexed count, rankings and organic traffic remain unmeasured. Vercel UI also confirms Speed Insights and Web Analytics are not enabled.

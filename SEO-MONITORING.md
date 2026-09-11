@@ -50,3 +50,23 @@ Record returned IDs with the deployment commit. Future `compare` without `--base
 After every SEO-critical deploy: compare key templates, run all-URL regression, inspect new page mobile layout and accept a baseline only after review. Every 2–4 weeks: review actual GSC queries/pages by locale, indexing exclusions and Google-selected canonical. Compare clicks/impressions/CTR over appropriate periods, accounting for low volume; do not infer Google indexing from sitemap inclusion. Query/page cannibalization should be investigated before adding related pages. Check field CWV when available, and repeat identical throttled lab scenarios for performance changes.
 
 No scheduled automation was created; this document is the repeatable manual workflow. See SEARCH-CONSOLE-PLAYBOOK.md for property and measurement setup, and SEO-EXECUTION-2026-09-12.md for outstanding priorities and integration limitations.
+
+## Accepted production baseline: 872f037
+
+The release was confirmed Ready / Production / Current on Vercel, with twynzo.com assigned, and all 78 live URLs passed regression. The following accepted baselines preserve the exact URLs; the previous IDs 1–8 remain intact.
+
+| Current ID | URL |
+|---|---|
+| 9 | https://twynzo.com/ |
+| 10 | https://twynzo.com/zh-hant |
+| 11 | https://twynzo.com/en |
+| 12 | https://twynzo.com/zh-hant/dope |
+| 13 | https://twynzo.com/zh-hant/tests/personality-16 |
+| 14 | https://twynzo.com/zh-hant/tests/love-personality |
+| 15 | https://twynzo.com/en/guides/read-personality-results |
+| 16 | https://twynzo.com/en/guides/infp-love |
+| 17 | https://twynzo.com/en/guides/personality-preferences |
+| 18 | https://twynzo.com/zh-hant/guides/dope-team-exercise |
+| 19 | https://twynzo.com/en/guides/relationship-check-in |
+
+For the next root comparison, use `--baseline-id 9` (or omit the ID until a newer root baseline is deliberately accepted). For a new guide use ID 17, 18 or 19 with its matching URL. The accepted full crawl is `.seo-cache/accepted-release/crawl.json`. A documentation-only subsequent commit does not change the intended SEO content; build-ID changes can still produce an informational HTML hash difference.
