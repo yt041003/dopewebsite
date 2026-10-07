@@ -35,7 +35,7 @@ function groupRows(rows:AggregateRow[],slug:Slug){return rows.filter(row=>row.sl
 export function generateStaticParams(){return locales.map(locale=>({locale}));}
 export async function generateMetadata({params}:{params:Promise<{locale:string}>}):Promise<Metadata>{
  const {locale}=await params;if(!locales.includes(locale as Locale))notFound();const en=locale==='en';
- return pageMetadata(locale as Locale,'/insights/personality-data',en?'Twynzo Personality Data — Anonymous Quiz Trends | Twynzo':'Twynzo 人格趨勢資料｜匿名測驗結果 — Twynzo',en?'Explore privacy-safe aggregate result trends from Twynzo quizzes. The dataset starts on October 8, 2026, excludes historical display baselines and is shown only after a minimum sample size.':'查看 Twynzo 測驗的匿名匯總結果趨勢。資料由 2026 年 10 月 8 日開始記錄，不包含歷史展示基數，並只在達到最低樣本量後顯示分布。');
+ return pageMetadata(locale as Locale,'/insights/personality-data',en?'Twynzo Personality Data — Anonymous Quiz Trends | Twynzo':'Twynzo 人格趨勢資料｜匿名測驗結果 — Twynzo',en?'Explore privacy-safe aggregate result trends from Twynzo quizzes. Historical display baselines are excluded and distributions appear only after a minimum newly tracked sample.':'查看 Twynzo 測驗的私隱友善匿名匯總結果趨勢。歷史展示基數不會計入，並只在新增追蹤樣本達到最低門檻後顯示分布。');
 }
 
 export default async function Page({params}:{params:Promise<{locale:string}>}){
@@ -43,15 +43,16 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
  let rows:AggregateRow[]=[];let unavailable=false;
  try{rows=await resultAggregates();}catch{unavailable=true;}
  const publishable=TESTS.some(slug=>(groupRows(rows,slug)[0]?.sample??0)>=MIN_SAMPLE);
+ const recordedFrom=rows.map(row=>row.recordedFrom).sort()[0]??null;
  const title=en?'Twynzo personality data':'Twynzo 人格趨勢資料';
- const description=en?'Privacy-safe aggregate quiz outcomes recorded from October 8, 2026 onward. Historical display baselines are excluded.':'由 2026 年 10 月 8 日起記錄的私隱友善匿名測驗匯總結果；歷史展示基數不會計入。';
- const dataset=publishable?{
+ const description=en?'Privacy-safe aggregate quiz outcomes recorded after aggregate tracking is enabled. Historical display baselines are excluded.':'啟用匿名結果匯總後記錄的私隱友善測驗趨勢；歷史展示基數不會計入。';
+ const dataset=publishable&&recordedFrom?{
   '@context':'https://schema.org','@type':'Dataset',
   name:en?'Twynzo anonymous personality quiz result trends':'Twynzo 匿名人格測驗結果趨勢',
   description,
   url:localizedUrl(locale,'/insights/personality-data'),
   creator:{'@type':'Organization',name:'Twynzo',url:siteUrl()},
-  temporalCoverage:'2026-10-08/..',
+  temporalCoverage:recordedFrom+'/..',
   measurementTechnique:en?'Anonymous first-completion aggregate counts; no answer sequence or result-to-visitor mapping is stored.':'匿名首次完成匯總計數；不儲存作答序列或結果與訪客的對應。',
   variableMeasured:[en?'Quiz result code':'測驗結果代碼',en?'Anonymous first-completion count':'匿名首次完成次數'],
  }:null;
@@ -63,11 +64,11 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
    <p className="editorial-disclaimer">{en?'These are descriptive counts from people who completed a Twynzo quiz after tracking began. They are not a representative population sample, prevalence estimate or psychological norm.':'以下只是開始記錄後完成 Twynzo 測驗者的描述性計數，不是具代表性的人口樣本、盛行率估計或心理常模。'}</p>
    <nav className="article-toc" aria-label={en?'On this page':'本頁內容'}><a href="#method">{en?'How the data works':'資料怎樣產生'}</a>{TESTS.map(slug=><a key={slug} href={'#'+slug}>{testNames[slug][i]}</a>)}</nav>
    <section id="method"><h2>{en?'How this dataset works':'這份資料怎樣產生？'}</h2>
-    <p>{en?'Result-distribution tracking starts on October 8, 2026. Only a browser’s first counted completion for a quiz can add to its aggregate result count. Twynzo does not store the answer sequence or a table linking a visitor to a result type for this dataset.':'結果分布由 2026 年 10 月 8 日開始記錄。每個瀏覽器在同一測驗只有首次被計入的完成可增加匯總結果數；這份資料不儲存作答序列，也不建立訪客與結果類型的對應表。'}</p>
+    <p>{en?'Result-distribution tracking starts when the aggregate counter is enabled. Only a browser’s first counted completion for a quiz can add to its aggregate result count. Twynzo does not store the answer sequence or a table linking a visitor to a result type for this dataset.':'結果分布會在匿名匯總計數器啟用後開始記錄。每個瀏覽器在同一測驗只有首次被計入的完成可增加匯總結果數；這份資料不儲存作答序列，也不建立訪客與結果類型的對應表。'}</p>
     <p>{en?'The older 3,125 display baseline is excluded because it was never a verified result-by-result sample. A distribution is hidden until at least 25 newly recorded outcomes exist for that quiz. Clearing cookies, using another device or automated traffic can still affect counts, so the data should be treated as exploratory product data rather than research evidence.':'舊有 3,125 展示基數不會計入，因為它從來不是逐個結果驗證的樣本。每個測驗至少累積 25 個新記錄結果後才顯示分布。清除 Cookie、使用其他裝置或自動化流量仍可能影響計數，因此只能視為探索性的產品資料，不是研究證據。'}</p>
    </section>
    {unavailable&&<section><h2>{en?'Data temporarily unavailable':'資料暫時未能讀取'}</h2><p>{en?'The quizzes remain available. This page will show aggregate trends again when the counter service is reachable.':'測驗仍可正常使用；匯總計數服務恢復後，本頁會再次顯示趨勢。'}</p></section>}
-   {TESTS.map(slug=>{const data=groupRows(rows,slug),sample=data[0]?.sample??0,ready=sample>=MIN_SAMPLE;return <section id={slug} key={slug}><h2>{testNames[slug][i]}</h2><p>{en?'New tracked sample: '+sample.toLocaleString()+' first-counted completions.':'新增追蹤樣本：'+sample.toLocaleString()+' 次首次計入完成。'} {ready?(en?'The minimum display threshold has been reached.':'已達最低展示門檻。'):(en?'Distribution stays hidden until '+MIN_SAMPLE+' new outcomes are recorded.':'累積至 '+MIN_SAMPLE+' 個新結果前不顯示分布。')}</p>
+   {TESTS.map(slug=>{const data=groupRows(rows,slug),sample=data[0]?.sample??0,ready=sample>=MIN_SAMPLE;return <section id={slug} key={slug}><h2>{testNames[slug][i]}</h2><p>{en?'New tracked sample: '+sample.toLocaleString()+' first-counted completions.':'新增追蹤樣本：'+sample.toLocaleString()+' 次首次計入完成。'} {sample>0&&(en?' Recorded from '+data[0].recordedFrom+'.':' 記錄開始日期：'+data[0].recordedFrom+'。')} {ready?(en?'The minimum display threshold has been reached.':'已達最低展示門檻。'):(en?'Distribution stays hidden until '+MIN_SAMPLE+' new outcomes are recorded.':'累積至 '+MIN_SAMPLE+' 個新結果前不顯示分布。')}</p>
     {ready&&<div className="article-table-scroll"><table><caption>{en?'Observed result distribution':'觀察到的結果分布'}</caption><thead><tr><th scope="col">{en?'Result':'結果'}</th><th scope="col">{en?'Count':'次數'}</th><th scope="col">{en?'Share':'比例'}</th></tr></thead><tbody>{data.map(row=><tr key={row.resultCode}><th scope="row">{labelFor(slug,row.resultCode,en)}</th><td>{row.completions.toLocaleString()}</td><td>{(row.completions/row.sample*100).toFixed(1)}%</td></tr>)}</tbody></table></div>}
     <ResourceLinks locale={locale} paths={[testPaths[slug],slug==='dope'?'/topics/communication':slug==='love-personality'?'/topics/relationships':'/topics/personality','/methodology']}/>
    </section>;})}
