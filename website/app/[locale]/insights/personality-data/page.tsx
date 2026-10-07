@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import type {CSSProperties} from 'react';
 import {notFound} from 'next/navigation';
 import PixelSpace from '@/components/pixel-space';
 import TwynzoBrand from '@/components/twynzo-brand';
