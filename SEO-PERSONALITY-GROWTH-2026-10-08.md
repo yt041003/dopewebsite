@@ -52,7 +52,7 @@ Added:
 - `database/result-aggregates.sql`
 
 Design:
-- Result-distribution tracking begins only after this release.
+- Result-distribution tracking begins only after the aggregate database migration is enabled; the public page reports the actual first-recorded date.
 - Historical display baseline 3,125 is excluded.
 - Answer sequences are not stored.
 - The aggregate table does not store visitor hashes.
@@ -61,7 +61,7 @@ Design:
 - No demographic claims or population prevalence claims are made.
 - Dataset JSON-LD appears only after a displayable sample exists.
 
-The SQL is intentionally not active until the dedicated Supabase project is active and the schema is applied.
+The SQL is intentionally not active until the dedicated Supabase project is active and the schema is applied. No historical result distribution is inferred before that activation.
 
 ### 6. Internal linking
 - Quiz landing pages → topic hub + result library + methodology.
