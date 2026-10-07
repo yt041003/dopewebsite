@@ -3,6 +3,8 @@ import {typeContexts,contextHeadings} from './type-contexts';
 import {dopeContexts} from './dope-contexts';
 import {relationshipGuides} from './relationship-guides';
 import {typeProfiles,typeHeadings,type TextPair} from './type-content';
+import {loveProfiles} from './love-content';
+import {topicClusters} from './topic-clusters';
 export type Section = {heading:TextPair;body:TextPair;items?:TextPair[];ordered?:boolean;worksheet?:TextPair;table?:{caption:TextPair;headers:TextPair[];rows:TextPair[][]}};
 export type ContentPage = {path:string;title:TextPair;description:TextPair;sections:Section[];links:string[];kind?:'guide'|'type'|'hub';index?:boolean;published?:string;updated?:string;sources?:{url:string;label:TextPair}[]};
 const s=(heading:TextPair,body:TextPair):Section=>({heading,body});
@@ -76,6 +78,15 @@ const trust:ContentPage[]=[
  s(['結果可以與不可以說明甚麼','What a result can and cannot tell you'],['比例描述本次作答，不是人口百分位、準確率或能力等級。四字母與鳥類名稱是解讀用語，不會預測職業成就或關係成功。不同情境和題目理解會影響結果。16 型內容以 MBTI 概念為靈感，但不是官方 MBTI® 評估，亦無關聯聲稱。','Percentages describe these answers, not population percentiles, accuracy or ability. Letter codes and birds are interpretive language, not predictions of career or relationship success. Context and item interpretation can change results. The 16-type product is inspired by MBTI concepts but is not the official MBTI® assessment or an affiliated product.']),
  s(['匿名完成計數','Anonymous completion counting'],['每個測驗的顯示數字由 3,125 初始基數加上記錄到的新增完成組成；初始基數並非經驗證的實際受測者。新增完成以匿名瀏覽器識別碼在每個測驗去重，同一瀏覽器重測通常不重複增加。不同裝置、清除 Cookie 或到期後可能再計，因此不是獨立真人數。','Each displayed quiz count consists of an initial baseline of 3,125 plus recorded completions. The baseline is not a verified count of actual participants. New completions are deduplicated per quiz by an anonymous browser identifier. Different devices, cleared cookies or expiry can lead to another count, so the total is not a count of distinct people.']),
  s(['答案與分享','Answers and sharing'],['計分在瀏覽器進行。完成時答案會傳到本站 API 作格式驗證，但不存進測驗資料庫；資料庫保存去重用雜湊及完成時間。切換語言時用工作階段儲存暫存答案，只有 60 秒內的資料會被接收。結果圖卡在裝置產生；是否分享由你決定。','Scoring happens in the browser. On completion, answers are sent to the site API for format validation but are not stored in the quiz database; it keeps a deduplication hash and completion time. Language switching uses session storage, accepting transferred answers only within 60 seconds. Result cards are generated on your device and you choose whether to share them.']),
+ s(['內容審閱與版本','Content review and versioning'],['題目、計分和解讀若有實質改動，Twynzo 會把相關頁面視為同一套產品一起檢查；不會只更新搜尋文案而讓方法說明落後。本站目前沒有聲稱外部心理師審核或學術驗證，內容製作與更正原則另見編輯原則。','When items, scoring or interpretation changes materially, Twynzo treats related pages as one product set to review together rather than updating search copy while leaving methodology behind. The site currently makes no claim of external psychologist review or academic validation; see the editorial policy for creation and correction practices.']),
+ ]},
+ {path:'/editorial-policy',title:['Twynzo 編輯原則：來源、AI 輔助、審閱與更正','Twynzo editorial policy: sources, AI assistance, review and corrections'],description:['了解 Twynzo 如何製作人格測驗與自我探索內容，包括原創題目、來源使用、AI 輔助、人工檢查、版本修訂與錯誤更正。','Learn how Twynzo creates personality quizzes and self-reflection content, including original items, source use, AI assistance, human checks, revisions and corrections.'],links:['/about','/methodology','/topics/self-discovery','/privacy','/guides'],sections:[
+ s(['原創內容與概念來源','Original content and concept sources'],['Twynzo 的測驗題目、結果解讀與練習以本站原創文字發布。引用具名心理學或人格框架時，會盡量連到可辨識的原始機構、研究或可靠說明；概念來源不代表對 Twynzo 題目、計分或結論的認證。','Twynzo publishes its quiz items, result interpretations and exercises as original site content. When a named psychology or personality framework is discussed, we aim to link identifiable primary organizations, research or reliable explanations. A concept source does not validate or endorse Twynzo’s items, scoring or conclusions.']),
+ s(['AI 如何參與','How AI is used'],['AI 會協助資料整理、初稿、翻譯比較、程式開發與一致性檢查。AI 產出不是專業審核；公開前仍需要檢查事實、內部計分邏輯、雙語意思、過度宣稱與是否把反思內容誤寫成診斷。','AI may assist with research organization, drafts, translation comparison, software development and consistency checks. AI output is not professional review. Before publication, facts, scoring logic, bilingual meaning, overclaims and diagnostic-sounding language still require checks.']),
+ s(['不會冒充專業背書','No invented expert endorsement'],['若內容沒有心理師、研究者或其他專業人士實際審閱，Twynzo 不會把它標示成「心理師審核」或「科學驗證」。現有原創測驗主要用於自我反思與交流，方法頁會清楚列出已知限制。','If a psychologist, researcher or other professional has not actually reviewed content, Twynzo does not label it psychologist-reviewed or scientifically validated. Current original quizzes are primarily for self-reflection and conversation, with known limitations stated on the methodology page.']),
+ s(['發布前檢查','Pre-publication checks'],['新頁面會檢查搜尋意圖是否與內容相符、標題與內文是否一致、來源是否真的支持相應概念、內部連結是否有效，以及中英文版本是否傳達同一核心意思。測驗頁另外檢查題數、選項、計分、同分與結果連結。','New pages are checked for alignment between search intent and content, consistency between headings and body copy, whether sources support the named concept, valid internal links and equivalent core meaning across English and Traditional Chinese. Quiz pages also check item count, options, scoring, ties and result links.']),
+ s(['更新、版本與更正','Updates, versions and corrections'],['若計分、產品行為或重要解釋改變，相關方法與結果頁應同步更新。發現實質錯誤時會修正文案，而不是保留錯誤只為維持排名。頁面有記錄日期時，日期應反映真實發布或實質更新，不會為了顯得新鮮而自動改日期。','When scoring, product behavior or a material interpretation changes, related methodology and result pages should be updated together. Substantive errors are corrected rather than preserved for ranking. Where dates are shown, they reflect real publication or meaningful revision rather than automatic freshness changes.']),
+ s(['如何閱讀 Twynzo 內容','How to read Twynzo content'],['把結果與指南當作產生問題的工具：找符合的例子，也找反例。涉及醫療、心理健康、招聘、教育評估或其他重要決定時，應使用適合該用途且有相應證據與專業程序的工具。','Use results and guides as tools for generating questions: look for examples and counterexamples. For medical, mental-health, hiring, educational assessment or other consequential decisions, use tools and professional processes supported for that purpose.']),
  ]},
  {path:'/privacy',title:['隱私說明：測驗資料與 Cookie','Privacy: quiz data and cookies'],description:['說明 Twynzo 的答案處理、匿名完成計數、語言暫存、Stripe 贊助及外部分享。','How Twynzo handles answers, anonymous completion counts, language transfers, Stripe contributions and external sharing.'],links:['/methodology','/terms','/about'],sections:[
  s(['這份說明的範圍','Scope of this notice'],['本頁說明目前 Twynzo 測驗的資料流程，不宣稱第三方服務不會處理任何資料。現有測驗不要求姓名、電郵或帳戶，也沒有新增 Google Analytics 或廣告追蹤器。網站託管服務仍可能處理請求、IP 位址和技術日誌以提供與保護服務。','This notice describes the current Twynzo quiz data flow, not a claim that third-party services process no data. Current quizzes request no name, email or account, and no Google Analytics or advertising tracker has been added. Hosting services may still process requests, IP addresses and technical logs to deliver and protect the service.']),
@@ -92,6 +103,8 @@ const trust:ContentPage[]=[
 ];
 export const contentPages:ContentPage[]=[
  ...practicalGuides,
+ ...loveProfiles,
+ ...topicClusters,
  ...typeProfiles.map(p=>({path:'/personality/'+p.code.toLowerCase(),title:[`${p.code} 人格探索：${p.name[0]}`,`${p.code} personality reflection: ${p.name[1]}`] as TextPair,description:[`從日常例子認識 ${p.code} 的思考、溝通與相處傾向，探索優勢、盲點和成長練習。原創自我探索解讀，不是職業或配對預測。`,`Explore ${p.code} through everyday communication, relationships and work, with strengths, blind spots and a practical growth exercise.`] as TextPair,kind:'type' as const,sections:[...p.sections.map((body,i)=>s(typeHeadings[i],body)),...typeContexts[p.code].map((body,i)=>s(contextHeadings[i],body))],links:['/tests/personality-16','/guides/read-personality-results',...(p.code==='INFP'?['/guides/infp-love']:[]),...p.related.map(code=>'/personality/'+code.toLowerCase())]})),
  ...dopeProfiles.map(p=>({...p,sections:[...p.sections,...dopeContexts[p.path]]})),...guides,...relationshipGuides,...trust,
  {path:'/tests',kind:'hub',title:['人格測驗總覽：選擇今天想探索的主題','Personality test collection: choose your next exploration'],description:['比較 Twynzo 的免費 DOPE、16 型人格和戀愛人格測驗，按溝通習慣、日常偏好或關係期待選擇。','Compare Twynzo’s free DOPE, 16-type and love quizzes by communication habits, everyday preferences and relationship expectations.'],links:['/dope','/tests/personality-16','/tests/love-personality','/guides/dope-vs-16-types','/methodology'],sections:[
@@ -108,3 +121,17 @@ export const findContent=(path:string)=>contentPages.find(p=>p.path===path);
 // Connect existing intent owners to the practical follow-up, without new keyword variants.
 const practicalFollowUps:Record<string,string>={'/guides/read-personality-results':'/guides/personality-preferences','/guides/communication-differences':'/guides/dope-team-exercise','/guides/expressing-relationship-needs':'/guides/relationship-check-in','/guides/infp-love':'/guides/relationship-check-in'};
 for(const page of contentPages){const next=practicalFollowUps[page.path];if(next&&!page.links.includes(next))page.links.push(next);}
+
+// Strengthen topic clusters without creating duplicate keyword-variant pages.
+const clusterFollowUps:Record<string,string>={
+ '/tests/personality-16':'/topics/personality',
+ '/personality':'/topics/personality',
+ '/tests/love-personality':'/topics/relationships',
+ '/dope':'/topics/communication',
+ '/guides/read-personality-results':'/topics/self-discovery',
+ '/methodology':'/editorial-policy',
+};
+for(const page of contentPages){
+ const cluster=page.path.startsWith('/personality/')?'/topics/personality':page.path.startsWith('/love/')?'/topics/relationships':page.path.startsWith('/dope/')?'/topics/communication':clusterFollowUps[page.path];
+ if(cluster&&page.path!==cluster&&!page.links.includes(cluster))page.links.push(cluster);
+}
