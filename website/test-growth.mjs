@@ -19,8 +19,8 @@ function prepare(name){
 async function load(name){return import(pathToFileURL(prepare(name)).href);}
 try {
 const {contentPages}=await load('editorial'),{typeProfiles}=await load('type-content'),{quizForContent,quizDestinations,stableResultPath}=await load('growth');
-const paths=new Set(['','/dope','/tests/personality-16','/tests/love-personality',...contentPages.map(p=>p.path)]);
-assert.equal(contentPages.length,35);assert.equal(paths.size,39);
+const paths=new Set(['','/dope','/tests/personality-16','/tests/love-personality','/insights/personality-data',...contentPages.map(p=>p.path)]);
+assert.equal(contentPages.length,45);assert.equal(paths.size,50);
 for(const page of contentPages){
  assert.ok(page.title.every(Boolean)&&page.description.every(Boolean));
  assert.ok(page.sections.every(s=>s.heading.length===2&&s.body.length===2&&s.body.every(Boolean)));
@@ -29,6 +29,7 @@ for(const page of contentPages){
  if(quiz)assert.ok(paths.has(quizDestinations[quiz].path));
  if(page.path.startsWith('/personality/'))assert.equal(page.sections.length,10);
  if(page.path.startsWith('/dope/'))assert.equal(page.sections.length,8);
+ if(page.path.startsWith('/love/'))assert.equal(page.sections.length,8);
 }
 for(const [path,kind] of [['/guides/personality-preferences','personality-16'],['/guides/dope-team-exercise','dope'],['/guides/relationship-check-in','love-personality']]){
  const page=contentPages.find(p=>p.path===path);assert.ok(page);assert.equal(quizForContent(path),kind);assert.ok(page.sections.some(s=>s.worksheet?.every(Boolean)));assert.ok(contentPages.filter(p=>p.path!==path).some(p=>p.links.includes(path)));
@@ -46,6 +47,8 @@ assert.equal(keys.size,136);assert.throws(()=>comparePreferences({first:'XXXX',s
 assert.equal(stableResultPath('en','personality-16','XXXX'),'/en/tests/personality-16');
 assert.equal(stableResultPath('zh-hant','dope','O'),'/zh-hant/dope/owl');
 assert.equal(stableResultPath('en','dope','D+O'),'/en/dope');
+assert.equal(stableResultPath('en','love-personality','W'),'/en/love/warm-communicator');
+assert.equal(stableResultPath('zh-hant','love-personality','W+C'),'/zh-hant/tests/love-personality');
 const {socialDestinations}=await load('social-sharing');
 for(const item of socialDestinations('/zh-hant/personality/infp?answers=secret#session','測驗 & reflection')){
  const u=new URL(item.href);assert.equal(u.protocol,'https:');
@@ -56,6 +59,6 @@ const {validOffer}=await load('monetization');
 assert.equal(validOffer({kind:'affiliate',placement:'article-break',label:'Book',disclosure:'',href:'https://example.com'}),false);
 assert.equal(validOffer({kind:'premium',placement:'result-secondary',label:'Report',description:'Details',href:'javascript:alert(1)'}),false);
 assert.equal(validOffer({kind:'ad',placement:'article-break',label:'Ad',reservedHeight:0}),false);
-console.log('PASS: bilingual content graph, quiz CTAs, 256 compatibility inputs, tie-safe stable shares, stripped query/session data and disabled-offer validation.');
+console.log('PASS: expanded bilingual content graph, result libraries, topic clusters, quiz CTAs, 256 compatibility inputs, tie-safe stable shares, stripped query/session data and disabled-offer validation.');
 
 } finally { for(const file of written)if(fs.existsSync(file))fs.unlinkSync(file);fs.rmdirSync(temp); }

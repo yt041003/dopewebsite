@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import {siteUrl,metadataFor,type Locale} from './seo';
 import {contentPages,findContent} from './editorial';
-export const corePaths=['','/dope','/tests/personality-16','/tests/love-personality'];
+export const corePaths=['','/dope','/tests/personality-16','/tests/love-personality','/insights/personality-data'];
 export const publicPaths=[...corePaths,...contentPages.filter(p=>p.index!==false).map(p=>p.path)];
 export function localizedUrl(locale:Locale,path:string){return `${siteUrl()}/${locale}${path}`;}
 export function alternateUrls(path:string){return {'zh-Hant':localizedUrl('zh-hant',path),en:localizedUrl('en',path),'x-default':localizedUrl('zh-hant',path)};}
@@ -11,13 +11,15 @@ export function pageMetadata(locale:Locale,path:string,title:string,description:
 }
 export function linkTitle(path:string,locale:Locale):string {
  const en=locale==='en';
- const names:Record<string,[string,string]>={'':['Twynzo','Twynzo'],'/dope':['DOPE 鳥類性格測驗','DOPE bird personality test'],'/tests/personality-16':['16 型人格探索','16-type personality quiz'],'/tests/love-personality':['戀愛人格測驗','Love personality quiz']};
+ const names:Record<string,[string,string]>={'':['Twynzo','Twynzo'],'/dope':['DOPE 鳥類性格測驗','DOPE bird personality test'],'/tests/personality-16':['16 型人格探索','16-type personality quiz'],'/tests/love-personality':['戀愛人格測驗','Love personality quiz'],'/insights/personality-data':['Twynzo 人格趨勢資料','Twynzo personality data']};
  return findContent(path)?.title[en?1:0]??names[path]?.[en?1:0]??'Twynzo';
 }
 export function breadcrumbPaths(path:string):string[]{
  if(!path)return [''];
  if(path.startsWith('/personality/'))return ['', '/tests','/tests/personality-16',path];
+ if(path.startsWith('/love/'))return ['', '/tests','/tests/love-personality',path];
  if(path.startsWith('/dope/'))return ['', '/tests','/dope',path];
+ if(path.startsWith('/topics/'))return ['', '/topics',path];
  if(path.startsWith('/guides/'))return ['', '/guides',path];
  if(path.startsWith('/tests/')||path==='/dope')return ['', '/tests',path];
  return ['',path];
