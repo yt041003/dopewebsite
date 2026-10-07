@@ -54,7 +54,7 @@ export default async function Page({params}:{params:Promise<{locale:string}>}){
   measurementTechnique:en?'Anonymous first-completion aggregate counts; no answer sequence or result-to-visitor mapping is stored.':'匿名首次完成匯總計數；不儲存作答序列或結果與訪客的對應。',
   variableMeasured:[en?'Quiz result code':'測驗結果代碼',en?'Anonymous first-completion count':'匿名首次完成次數'],
  }:null;
- return <div className="explore-theme editorial-theme" style={{'--accent':'#9bccff','--wash':'#20263d'} as React.CSSProperties}><PixelSpace en={en}/><div className="site-shell">
+ return <div className="explore-theme editorial-theme" style={{'--accent':'#9bccff','--wash':'#20263d'} as CSSProperties}><PixelSpace en={en}/><div className="site-shell">
   <JsonLd data={pageSchema(locale,'/insights/personality-data',title,description)}/>{dataset&&<JsonLd data={dataset}/>}
   <header className="topbar"><TwynzoBrand locale={locale}/><div className="language"><a href="/zh-hant/insights/personality-data" aria-current={!en?'page':undefined}>繁中</a><a href="/en/insights/personality-data" aria-current={en?'page':undefined}>EN</a></div></header>
   <main id="main-content" className="editorial-main"><Breadcrumbs locale={locale} path="/insights/personality-data"/><article>
