@@ -169,7 +169,7 @@ as $$
     r.result_code,
     r.completions,
     sum(r.completions) over(partition by r.slug)::bigint as sample,
-    date '2026-10-08' as recorded_from
+    min(r.first_recorded_at::date) over(partition by r.slug) as recorded_from
   from dope_private.result_counts r
   where r.completions > 0
   order by r.slug, r.completions desc, r.result_code
