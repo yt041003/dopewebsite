@@ -1,5 +1,6 @@
 import {NextRequest,NextResponse} from 'next/server';
 import {COOKIE,configured,readVisitor,validAnswers,counterRpc,completeVisitor} from '@/lib/counter';
+import {birds,score} from '@/lib/quiz';
 export const dynamic='force-dynamic';
 const headers={'Cache-Control':'no-store'};
 export async function GET(){try{return NextResponse.json(await counterRpc('dope_get_count'),{headers});}catch{return NextResponse.json({error:'Counter temporarily unavailable'},{status:503,headers});}}
@@ -12,6 +13,7 @@ export async function POST(request:NextRequest){
   const input=JSON.parse(raw);if(!validAnswers(input.answers))return NextResponse.json({error:'Complete all 20 questions'},{status:400,headers});
   const visitor=readVisitor(request.cookies.get(COOKIE)?.value);
   if(!visitor||Date.now()-visitor.issuedAt<5000)return NextResponse.json({error:'Quiz session not ready'},{status:403,headers});
-  return NextResponse.json(await completeVisitor(visitor.id),{headers});
+  const values=score(input.answers);const max=Math.max(...values);const result=birds.filter((_,i)=>values[i]===max).map(b=>b.code).join('+');
+  return NextResponse.json(await completeVisitor(visitor.id,result),{headers});
  }catch(error){return NextResponse.json({error:error instanceof SyntaxError?'Invalid JSON':'Counter temporarily unavailable'},{status:error instanceof SyntaxError?400:503,headers});}
 }
