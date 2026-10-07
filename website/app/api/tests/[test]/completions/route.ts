@@ -1,6 +1,6 @@
 import {NextRequest,NextResponse} from 'next/server';
 import {COOKIE,configured,readVisitor,counterRpc,completeTestVisitor} from '@/lib/counter';
-import {validTestAnswers} from '@/lib/personality-tests';
+import {calculate,validTestAnswers} from '@/lib/personality-tests';
 export const dynamic='force-dynamic';
 const headers={'Cache-Control':'no-store'};
 type Context={params:Promise<{test:string}>};
@@ -13,6 +13,7 @@ export async function POST(request:NextRequest,{params}:Context){
  try{const raw=await request.text();if(raw.length>1024)return NextResponse.json({error:'Request too large'},{status:413,headers});const input=JSON.parse(raw);
  if(!validTestAnswers(test,input?.answers))return NextResponse.json({error:'Complete every question'},{status:400,headers});
  const visitor=readVisitor(request.cookies.get(COOKIE)?.value);if(!visitor||Date.now()-visitor.issuedAt<5000)return NextResponse.json({error:'Quiz session not ready'},{status:403,headers});
- return NextResponse.json(await completeTestVisitor(test,visitor.id),{headers});
+ const result=calculate(test,input.answers).code;
+ return NextResponse.json(await completeTestVisitor(test,visitor.id,result),{headers});
  }catch(error){return NextResponse.json({error:error instanceof SyntaxError?'Invalid JSON':'Counter temporarily unavailable'},{status:error instanceof SyntaxError?400:503,headers});}
 }
