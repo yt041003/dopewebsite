@@ -2,9 +2,12 @@ import {NextRequest,NextResponse} from 'next/server';
 import {COOKIE,configured,readVisitor,counterRpc,completeTestVisitor} from '@/lib/counter';
 import {calculate,validTestAnswers} from '@/lib/personality-tests';
 export const dynamic='force-dynamic';
+// Public aggregate completion totals are not personalized; a short CDN cache
+// avoids an origin RPC for every page visitor. All mutations remain no-store.
 const headers={'Cache-Control':'no-store'};
+const publicCountHeaders={'Cache-Control':'public, s-maxage=60, stale-while-revalidate=300'};
 type Context={params:Promise<{test:string}>};
-export async function GET(_request:NextRequest,{params}:Context){const {test}=await params;if(test!=='personality-16'&&test!=='love-personality')return NextResponse.json({error:'Unknown test'},{status:404,headers});try{return NextResponse.json(await counterRpc('twynzo_get_count',{p_slug:test}),{headers});}catch{return NextResponse.json({error:'Counter temporarily unavailable'},{status:503,headers});}}
+export async function GET(_request:NextRequest,{params}:Context){const {test}=await params;if(test!=='personality-16'&&test!=='love-personality')return NextResponse.json({error:'Unknown test'},{status:404,headers});try{return NextResponse.json(await counterRpc('twynzo_get_count',{p_slug:test}),{headers:publicCountHeaders});}catch{return NextResponse.json({error:'Counter temporarily unavailable'},{status:503,headers});}}
 export async function POST(request:NextRequest,{params}:Context){
  const {test}=await params;if(test!=='personality-16'&&test!=='love-personality')return NextResponse.json({error:'Unknown test'},{status:404,headers});
  if(request.headers.get('origin')!==request.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403,headers});
