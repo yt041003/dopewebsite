@@ -2,8 +2,11 @@ import {NextRequest,NextResponse} from 'next/server';
 import {COOKIE,configured,readVisitor,validAnswers,counterRpc,completeVisitor} from '@/lib/counter';
 import {birds,score} from '@/lib/quiz';
 export const dynamic='force-dynamic';
+// Public aggregate completion totals are not personalized; a short CDN cache
+// avoids an origin RPC for every page visitor. All mutations remain no-store.
 const headers={'Cache-Control':'no-store'};
-export async function GET(){try{return NextResponse.json(await counterRpc('dope_get_count'),{headers});}catch{return NextResponse.json({error:'Counter temporarily unavailable'},{status:503,headers});}}
+const publicCountHeaders={'Cache-Control':'public, s-maxage=60, stale-while-revalidate=300'};
+export async function GET(){try{return NextResponse.json(await counterRpc('dope_get_count'),{headers:publicCountHeaders});}catch{return NextResponse.json({error:'Counter temporarily unavailable'},{status:503,headers});}}
 export async function POST(request:NextRequest){
  if(request.headers.get('origin')!==request.nextUrl.origin)return NextResponse.json({error:'Invalid origin'},{status:403,headers});
  if(!configured())return NextResponse.json({error:'Counter unavailable'},{status:503,headers});
